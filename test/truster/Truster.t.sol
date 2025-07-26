@@ -51,7 +51,7 @@ contract TrusterChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_truster() public checkSolvedByPlayer {
-         Exploit exploit = new Exploit(address(pool), address(token),address(recovery));
+         Exploit exploit = new Exploit(address(pool), address(token),address(recovery)); //hi
     }
 
     /**
